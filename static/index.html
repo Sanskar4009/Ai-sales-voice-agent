@@ -1,0 +1,1751 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fortivex AI · Forvi — Sales Voice Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            canvas: '#051215',
+            surface: '#0A1E22',
+            elevated: '#0F282D',
+            borderline: '#173A40',
+            headerline: '#15353B',
+            mint: {
+              accent: '#5EEAD4',
+              soft: '#99F6E4',
+              pale: '#A7F3D0',
+              ink: '#041316',
+            },
+          },
+          fontFamily: {
+            display: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    :root {
+      --bg-canvas: #051215;
+      --bg-surface: #0A1E22;
+      --bg-elevated: #0F282D;
+      --border-structural: #173A40;
+      --border-header: #15353B;
+      --mint-accent: #5EEAD4;
+      --mint-soft: #99F6E4;
+      --text-primary: #ECFDF5;
+      --text-cta-dark: #041316;
+    }
+
+    ::selection {
+      background-color: rgba(94, 234, 212, 0.28);
+      color: #ECFDF5;
+    }
+
+    body {
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.875rem;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    h1, h2 {
+      font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    }
+
+    h1 {
+      font-size: 1.125rem;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      line-height: 1.25;
+      letter-spacing: -0.025em;
+    }
+
+    h3 {
+      font-size: 0.75rem;
+      line-height: 1.35;
+      letter-spacing: 0.04em;
+    }
+
+    button, input {
+      color: inherit;
+    }
+
+    /* Refined Architectural Surface & Subtle 3D Elevation */
+    .arch-card {
+      background-color: var(--bg-surface);
+      color: var(--text-primary);
+      padding: 1.125rem;
+      border: 1px solid var(--border-structural);
+      box-shadow:
+        inset 0 1px 0 rgba(167, 243, 208, 0.08),
+        0 10px 26px -14px rgba(0, 0, 0, 0.78),
+        0 2px 8px -4px rgba(0, 0, 0, 0.5);
+      transition:
+        transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 0.22s ease,
+        box-shadow 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+        background-color 0.22s ease;
+    }
+
+    .arch-card-hover:hover {
+      transform: perspective(900px) translateY(-2px);
+      border-color: rgba(45, 212, 191, 0.4);
+      background-color: #0C2328;
+      box-shadow:
+        inset 0 1px 0 rgba(167, 243, 208, 0.14),
+        0 18px 34px -16px rgba(0, 0, 0, 0.85),
+        0 6px 14px -6px rgba(0, 0, 0, 0.6);
+    }
+
+    .prompt-card {
+      padding: 1rem 1.125rem;
+    }
+
+    /* Tactile Floating Bottom Command Dock */
+    .command-dock {
+      background-color: rgba(10, 30, 34, 0.92);
+      color: var(--text-primary);
+      padding: 0.75rem;
+      border: 1px solid var(--border-structural);
+      box-shadow:
+        inset 0 1px 0 rgba(167, 243, 208, 0.08),
+        0 20px 44px -16px rgba(0, 0, 0, 0.88),
+        0 4px 12px -4px rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(18px);
+    }
+
+    /* Mint Foam Primary CTA */
+    .btn-mint-cta {
+      background-color: var(--mint-accent);
+      color: var(--text-cta-dark);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.35),
+        0 6px 16px -6px rgba(0, 0, 0, 0.65);
+      transition: background-color 0.18s ease, transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .btn-mint-cta:hover {
+      background-color: var(--mint-soft);
+      transform: translateY(-1px);
+    }
+    .btn-mint-cta:active {
+      transform: translateY(0);
+    }
+
+    /* Segmented Nav Sliding Pill */
+    #navSlidingPill {
+      transition:
+        transform 0.36s cubic-bezier(0.22, 1, 0.36, 1),
+        width 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* Live WS Breath Indicator */
+    @keyframes wsLiveBreath {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(0.86); }
+    }
+    .ws-dot-live {
+      animation: wsLiveBreath 2.2s ease-in-out infinite;
+    }
+
+    /* Recording Waveform Bars */
+    @keyframes waveBar {
+      0%, 100% { transform: scaleY(0.35); }
+      50% { transform: scaleY(1); }
+    }
+    .dock-wave-bar {
+      width: 2.5px;
+      height: 16px;
+      border-radius: 9999px;
+      background-color: #FFFFFF;
+      transform-origin: center;
+      animation: waveBar 0.72s ease-in-out infinite;
+    }
+    .dock-wave-bar:nth-child(2) { animation-delay: 0.12s; }
+    .dock-wave-bar:nth-child(3) { animation-delay: 0.24s; }
+    .dock-wave-bar:nth-child(4) { animation-delay: 0.36s; }
+    .dock-wave-bar:nth-child(5) { animation-delay: 0.18s; }
+
+    /* Message & View Transitions */
+    @keyframes slideUpFade {
+      0% {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .msg-enter {
+      animation: slideUpFade 0.26s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes viewFadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .view-enter {
+      animation: viewFadeIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    /* Custom Scrollbar */
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #173A40;
+      border-radius: 9999px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #23545D;
+    }
+  </style>
+</head>
+<body class="bg-canvas text-emerald-50 min-h-screen flex flex-col antialiased">
+
+  <!-- Top Navigation Header (64px height, backdrop-blur-md, bottom hairline #15353B) -->
+  <header class="sticky top-0 z-30 min-h-[64px] bg-canvas/85 backdrop-blur-md border-b border-headerline">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 min-h-[64px] py-2 flex flex-wrap items-center justify-between gap-3">
+
+      <!-- Left: Geometric Brand Mark + Forvi Live Status + Latency -->
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-9 h-9 rounded-lg bg-surface border border-borderline flex items-center justify-center shrink-0" title="Fortivex AI">
+          <svg class="w-4 h-4 text-mint-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="12 2 21 7 21 17 12 22 3 17 3 7 12 2"/>
+            <polyline points="12 22 12 12 21 7"/>
+            <line x1="3" y1="7" x2="12" y2="12"/>
+          </svg>
+        </div>
+
+        <div class="flex items-center gap-2.5 min-w-0">
+          <h1 class="font-display font-semibold text-emerald-50 truncate">Fortivex</h1>
+          <span class="text-slate-500 text-xs" aria-hidden="true">/</span>
+          <div id="wsStatusPill" class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-surface border border-borderline text-xs">
+            <span id="wsStatusDot" class="w-2 h-2 rounded-full bg-amber-400"></span>
+            <span id="wsStatusText" class="font-medium text-emerald-100">Connecting</span>
+            <span class="text-slate-600" aria-hidden="true">·</span>
+            <span id="latencyBadge" class="font-mono text-[11px] text-mint-soft tabular-nums">-- ms</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center: Segmented Tab Switcher with Animated Sliding Pill -->
+      <nav aria-label="Workspace Views" class="order-3 xl:order-2 w-full xl:w-auto overflow-x-auto">
+        <div id="navSegmentedBar" class="relative inline-flex items-center p-1 rounded-xl bg-surface border border-borderline min-w-max">
+          <div id="navSlidingPill" class="absolute top-1 bottom-1 left-1 rounded-lg bg-elevated border border-mint-accent/35 pointer-events-none"></div>
+
+          <button
+            type="button"
+            data-view-tab="voice"
+            class="nav-tab-btn relative z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-mint-accent/50"
+          >
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            </svg>
+            <span>Voice Studio</span>
+          </button>
+
+          <button
+            type="button"
+            data-view-tab="crm"
+            class="nav-tab-btn relative z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-mint-accent/50"
+          >
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect width="18" height="18" x="3" y="4" rx="2"/>
+              <line x1="16" x2="16" y1="2" y2="6"/>
+              <line x1="8" x2="8" y1="2" y2="6"/>
+              <line x1="3" x2="21" y1="10" y2="10"/>
+            </svg>
+            <span>CRM &amp; Calendar</span>
+            <span id="navLeadsCount" class="font-mono px-1.5 py-0.5 rounded text-[10px] font-medium bg-canvas/80 text-mint-soft border border-borderline tabular-nums">0</span>
+            <span id="navApptsCount" class="font-mono px-1.5 py-0.5 rounded text-[10px] font-medium bg-canvas/80 text-mint-accent border border-borderline tabular-nums">0</span>
+          </button>
+
+          <button
+            type="button"
+            data-view-tab="intelligence"
+            class="nav-tab-btn relative z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-mint-accent/50"
+          >
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 3v18h18"/>
+              <path d="m19 9-5 5-4-4-3 3"/>
+            </svg>
+            <span>Call Intelligence</span>
+            <span id="navIntelReadyDot" class="hidden w-1.5 h-1.5 rounded-full bg-mint-accent"></span>
+          </button>
+
+          <button
+            type="button"
+            data-view-tab="split"
+            class="nav-tab-btn relative z-10 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-mint-accent/50"
+          >
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect width="18" height="18" x="3" y="3" rx="2"/>
+              <line x1="12" x2="12" y1="3" y2="21"/>
+            </svg>
+            <span>Split Workspace</span>
+          </button>
+        </div>
+      </nav>
+
+      <!-- Right: Monospace Session ID Pill with Copy + New Session -->
+      <div class="order-2 xl:order-3 flex items-center gap-2 shrink-0">
+        <div class="inline-flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-lg bg-surface border border-borderline">
+          <span id="sessionBadge" class="font-mono text-xs text-mint-soft tabular-nums">fx-...</span>
+          <button
+            id="copySessionBtn"
+            type="button"
+            title="Copy Session ID"
+            class="p-1 rounded hover:bg-elevated text-slate-400 hover:text-mint-accent transition-colors focus:outline-none focus:ring-2 focus:ring-mint-accent/50"
+          >
+            <svg id="copyIcon" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+            </svg>
+            <svg id="copiedIcon" class="hidden w-3.5 h-3.5 text-mint-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <button
+          id="newSessionBtn"
+          type="button"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-surface hover:bg-elevated border border-borderline hover:border-mint-accent/40 text-emerald-50 transition-colors focus:outline-none focus:ring-2 focus:ring-mint-accent/50"
+        >
+          <svg class="w-3.5 h-3.5 text-mint-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+            <path d="M3 3v5h5"/>
+          </svg>
+          <span>New Session</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace Stage -->
+  <main class="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 py-5 flex flex-col">
+    <div id="workspaceGrid" class="flex-1 flex flex-col">
+
+      <!-- VIEW 1: VOICE STUDIO -->
+      <section id="voiceView" class="view-enter flex-1 flex flex-col min-h-[calc(100vh-7.5rem)] justify-between">
+        <div class="flex-1 flex flex-col min-h-0">
+
+          <!-- Initial Empty Hero State -->
+          <div id="voiceHero" class="flex-1 flex flex-col items-center justify-center text-center px-4 py-8">
+            <div class="relative w-44 h-44 mb-5 flex items-center justify-center">
+              <canvas id="audioVisualizer" width="352" height="352" class="w-44 h-44" aria-label="Forvi audio frequency visualizer"></canvas>
+            </div>
+
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface border border-borderline text-xs font-medium text-mint-soft mb-3">
+              <span>Forvi · AI Sales Consultant</span>
+            </div>
+
+            <h2 class="font-display font-semibold text-2xl sm:text-3xl text-emerald-50 max-w-xl">
+              How can Forvi assist your prospect today?
+            </h2>
+            <p class="text-sm text-slate-400 mt-2.5 max-w-lg leading-relaxed">
+              Speak naturally or send a prompt. Forvi answers Fortivex pricing, SOC 2 security, and trial questions while qualifying leads and booking demos live.
+            </p>
+
+            <!-- 3 Architectural Prompt Cards -->
+            <div class="mt-7 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl w-full text-left">
+              <button
+                type="button"
+                data-quick-prompt="Tell me about Fortivex AI Suite pricing tiers and plans."
+                class="arch-card arch-card-hover prompt-card rounded-xl flex items-start gap-3 focus:outline-none focus:ring-2 focus:ring-mint-accent/50"
+              >
+                <span class="w-8 h-8 rounded-lg bg-elevated border border-borderline flex items-center justify-center shrink-0 mt-0.5">
+                  <svg class="w-4 h-4 text-mint-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                  </svg>
+                </span>
+                <div>
+                  <div class="font-display text-sm font-semibold text-emerald-50">Pricing &amp; Plans</div>
+                  <div class="text-xs text-slate-400 mt-0.5">Compare Starter, Growth &amp; Enterprise</div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                data-quick-prompt="How does the 14-day free trial work?"
+                class="arch-card arch-card-hover prompt-card rounded-xl flex items-start gap-3 focus:outline-none focus:ring-2 focus:ring-mint-accent/50"
+              >
+                <span class="w-8 h-8 rounded-lg bg-elevated border border-borderline flex items-center justify-center shrink-0 mt-0.5">
+                  <svg class="w-4 h-4 text-mint-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
+                  </svg>
+                </span>
+                <div>
+                  <div class="font-display text-sm font-semibold text-emerald-50">14-Day Free Trial</div>
+                  <div class="text-xs text-slate-400 mt-0.5">Sandbox limits, retention &amp; terms</div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                data-quick-prompt="I'd like to book a live demo slot. Which slots are available?"
+                class="arch-card arch-card-hover prompt-card rounded-xl flex items-start gap-3 focus:outline-none focus:ring-2 focus:ring-mint-accent/50"
+              >
+                <span class="w-8 h-8 rounded-lg bg-elevated border border-borderline flex items-center justify-center shrink-0 mt-0.5">
+                  <svg class="w-4 h-4 text-mint-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect width="18" height="18" x="3" y="4" rx="2"/>
+                    <line x1="16" x2="16" y1="2" y2="6"/>
+                    <line x1="8" x2="8" y1="2" y2="6"/>
+                    <line x1="3" x2="21" y1="10" y2="10"/>
+                  </svg>
+                </span>
+                <div>
+                  <div class="font-display text-sm font-semibold text-emerald-50">Book a Demo Slot</div>
+                  <div class="text-xs text-slate-400 mt-0.5">Check open calendar availability</div>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Active Conversation Stream -->
+          <div id="transcriptStreamWrap" class="hidden flex-1 flex-col min-h-0 max-w-3xl w-full mx-auto">
+            <div class="flex items-center justify-between pb-3 border-b border-headerline">
+              <div class="flex items-center gap-3">
+                <canvas id="miniAudioVisualizer" width="72" height="72" class="w-9 h-9 shrink-0" aria-hidden="true"></canvas>
+                <div>
+                  <h2 class="font-display text-base font-semibold text-emerald-50">Forvi · Active Discovery</h2>
+                  <p id="audioStateLabel" class="text-xs text-slate-400">Standby</p>
+                </div>
+              </div>
+              <span id="turnCounterBadge" class="font-mono text-xs text-mint-soft bg-surface border border-borderline px-2.5 py-1 rounded-md tabular-nums">0 turns</span>
+            </div>
+
+            <div
+              id="transcriptContainer"
+              class="flex-1 overflow-y-auto custom-scroll py-4 space-y-4 max-h-[calc(100vh-20.5rem)]"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Floating Bottom Command Dock -->
+        <div class="max-w-3xl w-full mx-auto pt-4">
+          <div class="command-dock rounded-2xl space-y-2.5">
+            <div id="agentNotice" class="hidden rounded-xl px-3.5 py-2 text-xs border"></div>
+
+            <div id="turnProcessingBar" class="hidden items-center gap-2 text-xs text-mint-soft px-1.5">
+              <svg class="w-3.5 h-3.5 animate-spin text-mint-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+              </svg>
+              <span id="turnProcessingText">Forvi is thinking...</span>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+              <!-- Live Mic Button (morphs into live waveform indicator when recording) -->
+              <button
+                id="micToggleBtn"
+                type="button"
+                class="btn-mint-cta shrink-0 px-4 py-2.5 rounded-xl font-display font-semibold text-xs sm:text-sm inline-flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-mint-soft disabled:opacity-50"
+              >
+                <svg id="micIcon" class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                  <line x1="12" x2="12" y1="19" y2="22"/>
+                </svg>
+                <span id="waveformBars" class="hidden items-center gap-0.5 h-4" aria-hidden="true">
+                  <span class="dock-wave-bar"></span>
+                  <span class="dock-wave-bar"></span>
+                  <span class="dock-wave-bar"></span>
+                  <span class="dock-wave-bar"></span>
+                  <span class="dock-wave-bar"></span>
+                </span>
+                <span id="micBtnLabel">Speak</span>
+                <span id="recordingBadge" class="hidden font-mono text-[11px] px-1.5 py-0.5 rounded bg-black/25 text-white tabular-nums">
+                  <span id="recordingTimer">00:00</span>
+                </span>
+              </button>
+
+              <!-- Text Input with Enter Shortcut Hint -->
+              <form id="textChatForm" class="flex-1 flex items-center gap-2">
+                <div class="relative flex-1 flex items-center">
+                  <label for="textInput" class="sr-only">Type a message to Forvi</label>
+                  <input
+                    id="textInput"
+                    type="text"
+                    placeholder="Type a message..."
+                    autocomplete="off"
+                    class="w-full bg-canvas border border-borderline rounded-xl pl-3.5 pr-16 py-2.5 text-sm text-emerald-50 placeholder-slate-400 focus:outline-none focus:border-mint-accent/60 focus:ring-1 focus:ring-mint-accent/40"
+                  />
+                  <span class="hidden md:inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono text-slate-400 bg-surface border border-borderline absolute right-2.5 pointer-events-none">
+                    Enter ↵
+                  </span>
+                </div>
+                <button
+                  id="sendTextBtn"
+                  type="submit"
+                  class="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-sm font-medium bg-elevated hover:bg-surface border border-borderline hover:border-mint-accent/40 text-emerald-50 transition-colors focus:outline-none focus:ring-2 focus:ring-mint-accent/50"
+                >
+                  <span>Send</span>
+                  <svg class="w-4 h-4 text-mint-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="m22 2-7 20-4-9-9-4Z"/>
+                    <path d="M22 2 11 13"/>
+                  </svg>
+                </button>
+              </form>
+
+              <!-- End Call & Analyze -->
+              <button
+                id="endCallBtn"
+                type="button"
+                class="shrink-0 px-3.5 py-2.5 rounded-xl bg-rose-600/90 hover:bg-rose-500 active:bg-rose-700 border border-rose-400/35 text-white font-display font-semibold text-xs sm:text-sm inline-flex items-center justify-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-rose-400 disabled:opacity-50"
+              >
+                <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-3.33-2.67m-2.67-3.34a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91"/>
+                  <line x1="22" x2="2" y1="2" y2="22"/>
+                </svg>
+                <span id="endCallBtnText">End Call &amp; Analyze</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 2: CRM & CALENDAR -->
+      <section id="crmView" class="hidden view-enter space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-headerline">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-lg bg-surface border border-borderline flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4 text-mint-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect width="18" height="18" x="3" y="4" rx="2"/>
+                <line x1="16" x2="16" y1="2" y2="6"/>
+                <line x1="8" x2="8" y1="2" y2="6"/>
+                <line x1="3" x2="21" y1="10" y2="10"/>
+              </svg>
+            </div>
+            <div>
+              <h2 class="font-display text-lg font-semibold text-emerald-50">CRM &amp; Calendar Sync</h2>
+              <p class="text-xs text-slate-400">Synced with SQLite whenever Forvi updates leads or books demo slots</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2.5">
+            <span id="lastSyncTime" class="font-mono text-xs text-slate-400 tabular-nums">Auto-sync</span>
+            <button
+              id="refreshCrmBtn"
+              type="button"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-surface hover:bg-elevated border border-borderline hover:border-mint-accent/40 text-emerald-50 transition-colors focus:outline-none focus:ring-2 focus:ring-mint-accent/50"
+            >
+              <svg class="w-3.5 h-3.5 text-mint-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/>
+                <path d="M21 3v5h-5"/>
+              </svg>
+              <span>Sync Now</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Schedule Grid: Available Slots -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-display font-semibold uppercase text-slate-300">Available Demo Slots</h3>
+            <span id="slotsCountBadge" class="font-mono text-xs text-mint-soft tabular-nums">0 open</span>
+          </div>
+          <div id="slotsList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div class="arch-card rounded-xl text-xs text-slate-400">Loading slots...</div>
+          </div>
+        </div>
+
+        <!-- Structured Data Cards: Captured Leads -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-display font-semibold uppercase text-slate-300">Captured CRM Leads</h3>
+            <span id="leadsCountBadge" class="font-mono text-xs text-mint-soft tabular-nums">0 total</span>
+          </div>
+          <div id="leadsList" class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+            <div class="arch-card rounded-xl text-xs text-slate-400">Loading leads...</div>
+          </div>
+        </div>
+
+        <!-- Booked Appointments -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="font-display font-semibold uppercase text-slate-300">Booked Appointments</h3>
+            <span id="appointmentsCountBadge" class="font-mono text-xs text-mint-soft tabular-nums">0 scheduled</span>
+          </div>
+          <div id="appointmentsList" class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+            <div class="arch-card rounded-xl text-xs text-slate-400">Loading appointments...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 3: CALL INTELLIGENCE (Executive Brief) -->
+      <section id="intelligenceView" class="hidden view-enter max-w-4xl w-full mx-auto space-y-5 py-1">
+        <div class="flex items-center justify-between gap-3 pb-4 border-b border-headerline">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-lg bg-surface border border-borderline flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4 text-mint-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 3v18h18"/>
+                <path d="m19 9-5 5-4-4-3 3"/>
+              </svg>
+            </div>
+            <div>
+              <h2 class="font-display text-lg font-semibold text-emerald-50">Call Intelligence Brief</h2>
+              <p class="text-xs text-slate-400">Executive post-call summary, qualification tier, objections &amp; next step</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="biEmptyState" class="arch-card rounded-2xl p-10 text-center flex flex-col items-center justify-center">
+          <div class="w-12 h-12 rounded-xl bg-elevated border border-borderline flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-mint-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <path d="M14 2v6h6"/>
+              <line x1="16" x2="8" y1="13" y2="13"/>
+              <line x1="16" x2="8" y1="17" y2="17"/>
+            </svg>
+          </div>
+          <p class="font-display text-base font-semibold text-emerald-50">Awaiting Call Completion</p>
+          <p class="text-sm text-slate-400 mt-1.5 max-w-md leading-relaxed">
+            Conduct a discovery session with Forvi and select <span class="text-rose-300 font-medium">End Call &amp; Analyze</span> to generate the executive brief.
+          </p>
+        </div>
+
+        <!-- Executive Brief Grid -->
+        <div id="biResultView" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="arch-card arch-card-hover rounded-xl flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-lg bg-elevated border border-borderline flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4 text-mint-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                  <line x1="9" x2="9.01" y1="9" y2="9"/>
+                  <line x1="15" x2="15.01" y1="9" y2="9"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-display font-semibold uppercase text-slate-400">Sentiment</h3>
+                <p class="text-xs text-slate-300 mt-0.5">Prospect disposition</p>
+              </div>
+            </div>
+            <span id="biSentimentBadge" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold">
+              Neutral
+            </span>
+          </div>
+
+          <div class="arch-card arch-card-hover rounded-xl flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-lg bg-elevated border border-borderline flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4 text-mint-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+              </div>
+              <div>
+                <h3 class="font-display font-semibold uppercase text-slate-400">Lead Tier</h3>
+                <p class="text-xs text-slate-300 mt-0.5">Qualification priority</p>
+              </div>
+            </div>
+            <span id="biLeadScoreBadge" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold">
+              Warm
+            </span>
+          </div>
+
+          <div class="arch-card arch-card-hover rounded-xl md:col-span-2 space-y-3">
+            <div class="flex items-center gap-2.5">
+              <svg class="w-4 h-4 text-mint-accent shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="8" x2="21" y1="6" y2="6"/>
+                <line x1="8" x2="21" y1="12" y2="12"/>
+                <line x1="8" x2="21" y1="18" y2="18"/>
+                <line x1="3" x2="3.01" y1="6" y2="6"/>
+                <line x1="3" x2="3.01" y1="12" y2="12"/>
+                <line x1="3" x2="3.01" y1="18" y2="18"/>
+              </svg>
+              <h3 class="font-display font-semibold uppercase text-mint-soft">Structured Key Takeaways</h3>
+            </div>
+            <ul id="biSummaryBullets" class="space-y-2 text-sm text-emerald-50/90 leading-relaxed list-disc pl-5"></ul>
+          </div>
+
+          <div class="arch-card arch-card-hover rounded-xl space-y-2">
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-mint-accent shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" x2="12" y1="8" y2="12"/>
+                <line x1="12" x2="12.01" y1="16" y2="16"/>
+              </svg>
+              <h3 class="font-display font-semibold uppercase text-mint-soft">Objection Handling Note</h3>
+            </div>
+            <p id="biObjections" class="text-sm text-emerald-50/90 leading-relaxed"></p>
+          </div>
+
+          <div class="arch-card arch-card-hover rounded-xl space-y-2 border-mint-accent/35">
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-mint-accent shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12h14"/>
+                <path d="m12 5 7 7-7 7"/>
+              </svg>
+              <h3 class="font-display font-semibold uppercase text-mint-soft">Recommended Next Step</h3>
+            </div>
+            <p id="biNextAction" class="text-sm text-emerald-50 font-medium leading-relaxed"></p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      // --- State ---
+      let sessionId = generateSessionId();
+      let activeView = 'voice';
+      let hasStartedChat = false;
+      let turnCount = 0;
+      let turnSentAt = null;
+      let ws = null;
+      let mediaRecorder = null;
+      let mediaStream = null;
+      let recordedChunks = [];
+      let isRecording = false;
+      let isSpeaking = false;
+      let recordingInterval = null;
+      let recordingSeconds = 0;
+      let currentAudio = null;
+
+      // Web Audio Analyser state for real audio-reactive canvas visualizer
+      let audioCtx = null;
+      let micAnalyser = null;
+      let micFreqData = null;
+      let playbackAnalyser = null;
+      let playbackFreqData = null;
+      let visualizerPhase = 0;
+
+      // --- DOM References ---
+      const workspaceGrid = document.getElementById('workspaceGrid');
+      const voiceView = document.getElementById('voiceView');
+      const crmView = document.getElementById('crmView');
+      const intelligenceView = document.getElementById('intelligenceView');
+      const navSegmentedBar = document.getElementById('navSegmentedBar');
+      const navSlidingPill = document.getElementById('navSlidingPill');
+      const navTabButtons = Array.from(document.querySelectorAll('[data-view-tab]'));
+      const navLeadsCount = document.getElementById('navLeadsCount');
+      const navApptsCount = document.getElementById('navApptsCount');
+      const navIntelReadyDot = document.getElementById('navIntelReadyDot');
+
+      const sessionBadge = document.getElementById('sessionBadge');
+      const copySessionBtn = document.getElementById('copySessionBtn');
+      const copyIcon = document.getElementById('copyIcon');
+      const copiedIcon = document.getElementById('copiedIcon');
+      const newSessionBtn = document.getElementById('newSessionBtn');
+      const wsStatusDot = document.getElementById('wsStatusDot');
+      const wsStatusText = document.getElementById('wsStatusText');
+      const latencyBadge = document.getElementById('latencyBadge');
+      const refreshCrmBtn = document.getElementById('refreshCrmBtn');
+
+      const voiceHero = document.getElementById('voiceHero');
+      const audioVisualizer = document.getElementById('audioVisualizer');
+      const miniAudioVisualizer = document.getElementById('miniAudioVisualizer');
+      const audioStateLabel = document.getElementById('audioStateLabel');
+      const transcriptStreamWrap = document.getElementById('transcriptStreamWrap');
+      const transcriptContainer = document.getElementById('transcriptContainer');
+      const turnCounterBadge = document.getElementById('turnCounterBadge');
+      const quickChips = Array.from(document.querySelectorAll('[data-quick-prompt]'));
+
+      const micToggleBtn = document.getElementById('micToggleBtn');
+      const micIcon = document.getElementById('micIcon');
+      const micBtnLabel = document.getElementById('micBtnLabel');
+      const waveformBars = document.getElementById('waveformBars');
+      const recordingBadge = document.getElementById('recordingBadge');
+      const recordingTimer = document.getElementById('recordingTimer');
+
+      const textChatForm = document.getElementById('textChatForm');
+      const textInput = document.getElementById('textInput');
+      const agentNotice = document.getElementById('agentNotice');
+      const turnProcessingBar = document.getElementById('turnProcessingBar');
+      const turnProcessingText = document.getElementById('turnProcessingText');
+      const endCallBtn = document.getElementById('endCallBtn');
+      const endCallBtnText = document.getElementById('endCallBtnText');
+
+      const slotsList = document.getElementById('slotsList');
+      const slotsCountBadge = document.getElementById('slotsCountBadge');
+      const leadsList = document.getElementById('leadsList');
+      const leadsCountBadge = document.getElementById('leadsCountBadge');
+      const appointmentsList = document.getElementById('appointmentsList');
+      const appointmentsCountBadge = document.getElementById('appointmentsCountBadge');
+      const lastSyncTime = document.getElementById('lastSyncTime');
+
+      const biEmptyState = document.getElementById('biEmptyState');
+      const biResultView = document.getElementById('biResultView');
+      const biSentimentBadge = document.getElementById('biSentimentBadge');
+      const biLeadScoreBadge = document.getElementById('biLeadScoreBadge');
+      const biSummaryBullets = document.getElementById('biSummaryBullets');
+      const biObjections = document.getElementById('biObjections');
+      const biNextAction = document.getElementById('biNextAction');
+
+      // --- Real-Time HTML5 Canvas Audio Visualizer ---
+      function getAudioEnergyBins(count) {
+        const bins = new Array(count).fill(0);
+        if (isRecording && micAnalyser && micFreqData) {
+          micAnalyser.getByteFrequencyData(micFreqData);
+          const step = Math.max(1, Math.floor(micFreqData.length / count));
+          for (let i = 0; i < count; i++) {
+            bins[i] = micFreqData[i * step] / 255;
+          }
+          return bins;
+        }
+        if (isSpeaking && playbackAnalyser && playbackFreqData) {
+          playbackAnalyser.getByteFrequencyData(playbackFreqData);
+          const step = Math.max(1, Math.floor(playbackFreqData.length / count));
+          let sum = 0;
+          for (let i = 0; i < count; i++) {
+            bins[i] = playbackFreqData[i * step] / 255;
+            sum += bins[i];
+          }
+          if (sum > 0.05) return bins;
+        }
+        // Gentle harmonic motion for idle or browser SpeechSynthesis fallback
+        const amp = isSpeaking ? 0.52 : 0.14;
+        const speed = isSpeaking ? 3.2 : 1.0;
+        for (let i = 0; i < count; i++) {
+          const wave = Math.sin(visualizerPhase * speed + i * 0.42) * 0.5 + 0.5;
+          const harmonic = Math.cos(visualizerPhase * (speed * 0.7) - i * 0.25) * 0.5 + 0.5;
+          bins[i] = amp * (0.45 + 0.55 * wave * harmonic);
+        }
+        return bins;
+      }
+
+      function drawRadialVisualizer(canvas, lineWidth = 2, isMini = false) {
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        const w = canvas.width;
+        const h = canvas.height;
+        const cx = w / 2;
+        const cy = h / 2;
+        ctx.clearRect(0, 0, w, h);
+
+        const barCount = isMini ? 24 : 48;
+        const bins = getAudioEnergyBins(barCount);
+        const avgEnergy = bins.reduce((a, b) => a + b, 0) / barCount;
+
+        const baseRadius = isMini ? w * 0.24 : w * 0.27;
+        const maxBoost = isMini ? w * 0.16 : w * 0.17;
+        const strokeColor = isRecording ? '#FB7185' : (isSpeaking ? '#99F6E4' : '#5EEAD4');
+
+        // Soft inner core circle
+        ctx.beginPath();
+        ctx.arc(cx, cy, baseRadius * (0.72 + avgEnergy * 0.18), 0, Math.PI * 2);
+        ctx.fillStyle = isRecording
+          ? 'rgba(251, 113, 133, 0.14)'
+          : 'rgba(94, 234, 212, 0.1)';
+        ctx.fill();
+        ctx.lineWidth = isMini ? 1.5 : 2;
+        ctx.strokeStyle = isRecording ? 'rgba(251, 113, 133, 0.55)' : 'rgba(94, 234, 212, 0.38)';
+        ctx.stroke();
+
+        // Smooth closed radial wave ring
+        ctx.beginPath();
+        for (let i = 0; i <= barCount; i++) {
+          const idx = i % barCount;
+          const angle = (idx / barCount) * Math.PI * 2 - Math.PI / 2;
+          const r = baseRadius + bins[idx] * maxBoost;
+          const x = cx + Math.cos(angle) * r;
+          const y = cy + Math.sin(angle) * r;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.lineWidth = lineWidth;
+        ctx.strokeStyle = strokeColor;
+        ctx.stroke();
+
+        // Outer frequency ticks
+        if (!isMini) {
+          for (let i = 0; i < barCount; i++) {
+            const angle = (i / barCount) * Math.PI * 2 - Math.PI / 2;
+            const r1 = baseRadius + 4;
+            const r2 = r1 + Math.max(3, bins[i] * maxBoost * 0.9);
+            ctx.beginPath();
+            ctx.moveTo(cx + Math.cos(angle) * r1, cy + Math.sin(angle) * r1);
+            ctx.lineTo(cx + Math.cos(angle) * r2, cy + Math.sin(angle) * r2);
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = isRecording
+              ? 'rgba(253, 164, 175, 0.72)'
+              : 'rgba(153, 246, 228, 0.55)';
+            ctx.stroke();
+          }
+        }
+      }
+
+      function animateVisualizers() {
+        visualizerPhase += 0.035;
+        if (!voiceHero.classList.contains('hidden')) {
+          drawRadialVisualizer(audioVisualizer, 2.4, false);
+        }
+        if (!transcriptStreamWrap.classList.contains('hidden')) {
+          drawRadialVisualizer(miniAudioVisualizer, 2, true);
+        }
+        requestAnimationFrame(animateVisualizers);
+      }
+
+      // --- Segmented Nav Sliding Pill & View Switcher ---
+      function positionSlidingPill(activeBtn) {
+        if (!activeBtn || !navSlidingPill) return;
+        const left = activeBtn.offsetLeft;
+        const width = activeBtn.offsetWidth;
+        navSlidingPill.style.width = `${width}px`;
+        navSlidingPill.style.transform = `translateX(${left - 4}px)`;
+      }
+
+      function triggerEnterAnimation(el) {
+        el.classList.remove('view-enter');
+        void el.offsetWidth;
+        el.classList.add('view-enter');
+      }
+
+      function setActiveView(viewName) {
+        activeView = viewName;
+        let activeBtn = null;
+
+        navTabButtons.forEach((btn) => {
+          const isActive = btn.dataset.viewTab === viewName;
+          btn.classList.remove('text-mint-soft', 'text-slate-400', 'hover:text-emerald-100');
+          if (isActive) {
+            btn.classList.add('text-mint-soft');
+            activeBtn = btn;
+          } else {
+            btn.classList.add('text-slate-400', 'hover:text-emerald-100');
+          }
+        });
+
+        requestAnimationFrame(() => positionSlidingPill(activeBtn));
+
+        workspaceGrid.className = 'flex-1 flex flex-col';
+        voiceView.className = 'hidden flex-1 flex-col min-h-[calc(100vh-7.5rem)] justify-between';
+        crmView.className = 'hidden space-y-6';
+        intelligenceView.className = 'hidden max-w-4xl w-full mx-auto space-y-5 py-1';
+
+        if (viewName === 'voice') {
+          voiceView.classList.remove('hidden');
+          voiceView.classList.add('flex');
+          triggerEnterAnimation(voiceView);
+        } else if (viewName === 'crm') {
+          crmView.classList.remove('hidden');
+          triggerEnterAnimation(crmView);
+        } else if (viewName === 'intelligence') {
+          intelligenceView.classList.remove('hidden');
+          triggerEnterAnimation(intelligenceView);
+        } else if (viewName === 'split') {
+          workspaceGrid.className = 'flex-1 grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch';
+          voiceView.className = 'lg:col-span-7 flex flex-col min-h-[calc(100vh-7.5rem)] justify-between';
+          crmView.className = 'lg:col-span-5 arch-card rounded-2xl overflow-y-auto custom-scroll max-h-[calc(100vh-7.5rem)] space-y-5';
+          triggerEnterAnimation(voiceView);
+          triggerEnterAnimation(crmView);
+        }
+      }
+
+      navTabButtons.forEach((btn) => {
+        btn.addEventListener('click', () => setActiveView(btn.dataset.viewTab));
+      });
+      window.addEventListener('resize', () => {
+        const currentBtn = navTabButtons.find((b) => b.dataset.viewTab === activeView);
+        positionSlidingPill(currentBtn);
+      });
+
+      // --- Helpers ---
+      function generateSessionId() {
+        const rand = Math.random().toString(36).slice(2, 8);
+        const ts = Date.now().toString(36).slice(-4);
+        return `fx-${ts}-${rand}`;
+      }
+
+      function escapeHtml(str) {
+        return String(str ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function formatSlotTime(isoString, compact = false) {
+        if (!isoString) return 'Unknown';
+        const normalized = isoString.endsWith('Z') || /[+-]\d{2}:\d{2}$/.test(isoString)
+          ? isoString
+          : `${isoString}Z`;
+        const date = new Date(normalized);
+        if (Number.isNaN(date.getTime())) return isoString;
+        const opts = compact
+          ? { timeZone: 'Asia/Kolkata', weekday: 'short', hour: 'numeric', minute: '2-digit', hour12: true }
+          : { timeZone: 'Asia/Kolkata', weekday: 'short', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hour12: true };
+        return new Intl.DateTimeFormat('en-IN', opts).format(date) + (compact ? '' : ' IST');
+      }
+
+      function formatToolExecutionLabel(ev) {
+        const res = ev.result || {};
+        const args = ev.arguments || {};
+        if (ev.tool === 'upsert_lead') {
+          const who = res.name || args.name || res.email || args.email;
+          return who ? `CRM Lead Synced · ${who}` : 'CRM Lead Synced';
+        }
+        if (ev.tool === 'book_appointment') {
+          if (res.status === 'booked') {
+            const when = res.slot_datetime ? formatSlotTime(res.slot_datetime, true) : 'Confirmed';
+            return `Demo Booked · ${when}`;
+          }
+          return 'Demo Booking Check';
+        }
+        return ev.tool;
+      }
+
+      function showNotice(message, variant = 'error') {
+        agentNotice.textContent = message;
+        agentNotice.classList.remove(
+          'hidden',
+          'bg-rose-950/60', 'border-rose-500/40', 'text-rose-200',
+          'bg-amber-950/60', 'border-amber-500/40', 'text-amber-200'
+        );
+        if (variant === 'warn') {
+          agentNotice.classList.add('bg-amber-950/60', 'border-amber-500/40', 'text-amber-200');
+        } else {
+          agentNotice.classList.add('bg-rose-950/60', 'border-rose-500/40', 'text-rose-200');
+        }
+      }
+
+      function clearNotice() {
+        agentNotice.classList.add('hidden');
+        agentNotice.textContent = '';
+      }
+
+      function setProcessing(active, label = 'Forvi is thinking...') {
+        if (active) {
+          turnProcessingText.textContent = label;
+          turnProcessingBar.classList.remove('hidden');
+          turnProcessingBar.classList.add('flex');
+          audioStateLabel.textContent = label;
+        } else {
+          turnProcessingBar.classList.add('hidden');
+          turnProcessingBar.classList.remove('flex');
+          if (!isRecording && !isSpeaking) {
+            audioStateLabel.textContent = 'Ready';
+          }
+        }
+      }
+
+      function setWsStatus(state) {
+        wsStatusDot.className = 'w-2 h-2 rounded-full';
+        if (state === 'open') {
+          wsStatusDot.classList.add('bg-emerald-400', 'ws-dot-live');
+          wsStatusText.textContent = 'WS Live';
+        } else if (state === 'connecting') {
+          wsStatusDot.classList.add('bg-amber-400');
+          wsStatusText.textContent = 'Connecting';
+        } else {
+          wsStatusDot.classList.add('bg-rose-400');
+          wsStatusText.textContent = 'Offline';
+        }
+      }
+
+      function ensureConversationMode() {
+        if (!hasStartedChat) {
+          hasStartedChat = true;
+          voiceHero.classList.add('hidden');
+          transcriptStreamWrap.classList.remove('hidden');
+          transcriptStreamWrap.classList.add('flex');
+        }
+      }
+
+      // --- Copy Session ID ---
+      copySessionBtn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(sessionId);
+          copyIcon.classList.add('hidden');
+          copiedIcon.classList.remove('hidden');
+          setTimeout(() => {
+            copiedIcon.classList.add('hidden');
+            copyIcon.classList.remove('hidden');
+          }, 1500);
+        } catch {
+          // Ignore clipboard permissions issues
+        }
+      });
+
+      // --- WebSocket Management ---
+      function connectWebSocket() {
+        if (ws) {
+          ws.onclose = null;
+          ws.close();
+          ws = null;
+        }
+        setWsStatus('connecting');
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}/ws/voice/${encodeURIComponent(sessionId)}`;
+        const socket = new WebSocket(wsUrl);
+        ws = socket;
+
+        socket.onopen = () => {
+          if (ws !== socket) return;
+          setWsStatus('open');
+          clearNotice();
+        };
+
+        socket.onmessage = async (event) => {
+          if (ws !== socket) return;
+          if (turnSentAt !== null) {
+            const elapsedMs = Math.max(1, Math.round(performance.now() - turnSentAt));
+            latencyBadge.textContent = `${elapsedMs} ms`;
+            turnSentAt = null;
+          }
+
+          setProcessing(false);
+          let payload;
+          try {
+            payload = JSON.parse(event.data);
+          } catch {
+            showNotice('Received malformed response from server.');
+            return;
+          }
+
+          if (payload.error) {
+            showNotice(payload.error);
+            return;
+          }
+
+          clearNotice();
+          if (payload.user_text) {
+            appendTranscriptBubble('user', payload.user_text);
+          }
+          if (payload.agent_text) {
+            appendTranscriptBubble('agent', payload.agent_text, payload.tool_events || []);
+            playAgentAudio(payload.audio_base64 || '', payload.agent_text);
+          }
+
+          if (Array.isArray(payload.tool_events) && payload.tool_events.length > 0) {
+            await fetchCrmAndCalendar();
+          }
+        };
+
+        socket.onerror = () => {
+          if (ws !== socket) return;
+          turnSentAt = null;
+          setWsStatus('closed');
+          setProcessing(false);
+        };
+
+        socket.onclose = () => {
+          if (ws !== socket) return;
+          turnSentAt = null;
+          setWsStatus('closed');
+          setProcessing(false);
+        };
+      }
+
+      // --- Audio Playback + Visualizer Binding ---
+      function ensureAudioContext() {
+        if (!audioCtx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) {
+            audioCtx = new AudioCtx();
+          }
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+          audioCtx.resume().catch(() => {});
+        }
+        return audioCtx;
+      }
+
+      function stopCurrentAudio() {
+        isSpeaking = false;
+        if (currentAudio) {
+          currentAudio.pause();
+          currentAudio = null;
+        }
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+        }
+        if (!isRecording) {
+          audioStateLabel.textContent = 'Ready';
+        }
+      }
+
+      function speakWithBrowserFallback(text) {
+        if (!text || !('speechSynthesis' in window)) return;
+        try {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = 'en-IN';
+          utterance.rate = 1.02;
+          utterance.onstart = () => {
+            isSpeaking = true;
+            audioStateLabel.textContent = 'Speaking';
+          };
+          utterance.onend = () => {
+            isSpeaking = false;
+            if (!isRecording) audioStateLabel.textContent = 'Ready';
+          };
+          utterance.onerror = () => {
+            isSpeaking = false;
+          };
+          window.speechSynthesis.speak(utterance);
+        } catch {
+          isSpeaking = false;
+        }
+      }
+
+      function playAgentAudio(audioBase64, fallbackText) {
+        stopCurrentAudio();
+        if (audioBase64 && audioBase64.trim().length > 0) {
+          try {
+            const audio = new Audio(`data:audio/mpeg;base64,${audioBase64}`);
+            currentAudio = audio;
+
+            const ctx = ensureAudioContext();
+            if (ctx) {
+              try {
+                const source = ctx.createMediaElementSource(audio);
+                playbackAnalyser = ctx.createAnalyser();
+                playbackAnalyser.fftSize = 128;
+                playbackFreqData = new Uint8Array(playbackAnalyser.frequencyBinCount);
+                source.connect(playbackAnalyser);
+                playbackAnalyser.connect(ctx.destination);
+              } catch {
+                playbackAnalyser = null;
+              }
+            }
+
+            audio.onplay = () => {
+              isSpeaking = true;
+              audioStateLabel.textContent = 'Speaking';
+            };
+            audio.onended = () => {
+              isSpeaking = false;
+              if (!isRecording) audioStateLabel.textContent = 'Ready';
+            };
+
+            const playPromise = audio.play();
+            if (playPromise && typeof playPromise.catch === 'function') {
+              playPromise.catch(() => speakWithBrowserFallback(fallbackText));
+            }
+            return;
+          } catch {
+            speakWithBrowserFallback(fallbackText);
+            return;
+          }
+        }
+        speakWithBrowserFallback(fallbackText);
+      }
+
+      // --- Transcript Rendering ---
+      function appendTranscriptBubble(role, text, toolEvents = []) {
+        ensureConversationMode();
+        if (role === 'user') {
+          turnCount += 1;
+          turnCounterBadge.textContent = `${turnCount} ${turnCount === 1 ? 'turn' : 'turns'}`;
+        }
+
+        const wrapper = document.createElement('div');
+        wrapper.className = role === 'user'
+          ? 'msg-enter flex flex-col items-end gap-1.5'
+          : 'msg-enter flex flex-col items-start gap-1.5';
+
+        const label = document.createElement('span');
+        label.className = 'text-[11px] font-medium text-slate-400 px-1 inline-flex items-center gap-1.5';
+        label.textContent = role === 'user' ? 'You' : 'Forvi';
+
+        const bubble = document.createElement('div');
+        if (role === 'user') {
+          bubble.className = 'max-w-[85%] rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm leading-relaxed bg-elevated border border-mint-accent/30 text-emerald-50';
+        } else {
+          bubble.className = 'max-w-[88%] arch-card rounded-2xl rounded-tl-sm text-sm leading-relaxed text-emerald-50';
+        }
+        bubble.textContent = text;
+
+        wrapper.appendChild(label);
+        wrapper.appendChild(bubble);
+
+        if (role === 'agent' && Array.isArray(toolEvents) && toolEvents.length > 0) {
+          const badgesRow = document.createElement('div');
+          badgesRow.className = 'flex flex-wrap gap-1.5 px-1';
+          for (const ev of toolEvents) {
+            const badge = document.createElement('span');
+            const isSuccess = ev.result && ev.result.status !== 'error';
+            badge.className = isSuccess
+              ? 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-mono bg-surface border border-mint-accent/35 text-mint-soft'
+              : 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-mono bg-surface border border-amber-400/35 text-amber-200';
+            badge.innerHTML = `
+              <svg class="w-3 h-3 text-mint-accent shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              <span>${escapeHtml(formatToolExecutionLabel(ev))}</span>
+            `;
+            badgesRow.appendChild(badge);
+          }
+          wrapper.appendChild(badgesRow);
+        }
+
+        transcriptContainer.appendChild(wrapper);
+        transcriptContainer.scrollTop = transcriptContainer.scrollHeight;
+      }
+
+      // --- Microphone Recording (getUserMedia + MediaRecorder + Live Audio Analyser) ---
+      function updateRecordingTimer() {
+        recordingSeconds += 1;
+        const mins = String(Math.floor(recordingSeconds / 60)).padStart(2, '0');
+        const secs = String(recordingSeconds % 60).padStart(2, '0');
+        recordingTimer.textContent = `${mins}:${secs}`;
+      }
+
+      function setRecordingUI(active) {
+        isRecording = active;
+        if (active) {
+          micToggleBtn.classList.remove('btn-mint-cta');
+          micToggleBtn.classList.add('bg-rose-600', 'hover:bg-rose-500', 'text-white', 'border', 'border-rose-400/45');
+          micIcon.classList.add('hidden');
+          waveformBars.classList.remove('hidden');
+          waveformBars.classList.add('inline-flex');
+          micBtnLabel.textContent = 'Stop';
+          recordingBadge.classList.remove('hidden');
+          recordingBadge.classList.add('inline-block');
+          audioStateLabel.textContent = 'Listening...';
+          recordingSeconds = 0;
+          recordingTimer.textContent = '00:00';
+          recordingInterval = setInterval(updateRecordingTimer, 1000);
+        } else {
+          micToggleBtn.classList.remove('bg-rose-600', 'hover:bg-rose-500', 'text-white', 'border', 'border-rose-400/45');
+          micToggleBtn.classList.add('btn-mint-cta');
+          micIcon.classList.remove('hidden');
+          waveformBars.classList.add('hidden');
+          waveformBars.classList.remove('inline-flex');
+          micBtnLabel.textContent = 'Speak';
+          recordingBadge.classList.add('hidden');
+          recordingBadge.classList.remove('inline-block');
+          if (!isSpeaking) audioStateLabel.textContent = 'Ready';
+          if (recordingInterval) {
+            clearInterval(recordingInterval);
+            recordingInterval = null;
+          }
+        }
+      }
+
+      async function startRecording() {
+        clearNotice();
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          showNotice('Microphone capture is not supported in this browser. Use the text input instead.');
+          return;
+        }
+        if (!ws || ws.readyState !== WebSocket.OPEN) {
+          connectWebSocket();
+          showNotice('Reconnecting WebSocket. Click Speak again in a moment.', 'warn');
+          return;
+        }
+
+        stopCurrentAudio();
+        try {
+          mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        } catch (err) {
+          showNotice(`Microphone access denied: ${err.message || 'Check browser permissions.'}`);
+          return;
+        }
+
+        // Bind live microphone stream to Web Audio Analyser for real-time canvas visualizer
+        const ctx = ensureAudioContext();
+        if (ctx) {
+          try {
+            const micSource = ctx.createMediaStreamSource(mediaStream);
+            micAnalyser = ctx.createAnalyser();
+            micAnalyser.fftSize = 128;
+            micFreqData = new Uint8Array(micAnalyser.frequencyBinCount);
+            micSource.connect(micAnalyser);
+          } catch {
+            micAnalyser = null;
+          }
+        }
+
+        recordedChunks = [];
+        const preferredMime = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+          ? 'audio/webm;codecs=opus'
+          : (MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : '');
+
+        mediaRecorder = preferredMime
+          ? new MediaRecorder(mediaStream, { mimeType: preferredMime })
+          : new MediaRecorder(mediaStream);
+
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data && event.data.size > 0) {
+            recordedChunks.push(event.data);
+          }
+        };
+
+        mediaRecorder.onstop = async () => {
+          const tracks = mediaStream ? mediaStream.getTracks() : [];
+          tracks.forEach((track) => track.stop());
+          mediaStream = null;
+          micAnalyser = null;
+
+          const audioBlob = new Blob(recordedChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
+          recordedChunks = [];
+          if (audioBlob.size === 0) {
+            showNotice('No audio was captured. Try speaking again.', 'warn');
+            return;
+          }
+
+          if (!ws || ws.readyState !== WebSocket.OPEN) {
+            showNotice('WebSocket disconnected before audio could be sent.');
+            return;
+          }
+
+          setProcessing(true, 'Transcribing & generating reply...');
+          turnSentAt = performance.now();
+          const arrayBuffer = await audioBlob.arrayBuffer();
+          ws.send(arrayBuffer);
+        };
+
+        mediaRecorder.start();
+        setRecordingUI(true);
+      }
+
+      function stopRecordingAndSend() {
+        setRecordingUI(false);
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+          mediaRecorder.stop();
+        }
+      }
+
+      micToggleBtn.addEventListener('click', () => {
+        if (isRecording) {
+          stopRecordingAndSend();
+        } else {
+          startRecording();
+        }
+      });
+
+      // --- Text Turns & Prompt Cards ---
+      function sendTextTurn(text) {
+        const cleaned = (text || '').trim();
+        if (!cleaned) return;
+
+        if (!ws || ws.readyState !== WebSocket.OPEN) {
+          showNotice('WebSocket is not connected yet. Reconnecting...', 'warn');
+          connectWebSocket();
+          return;
+        }
+
+        clearNotice();
+        stopCurrentAudio();
+        setProcessing(true, 'Forvi is thinking...');
+        turnSentAt = performance.now();
+        ws.send(JSON.stringify({ type: 'text', text: cleaned }));
+      }
+
+      textChatForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const text = textInput.value.trim();
+        if (!text) return;
+        sendTextTurn(text);
+        textInput.value = '';
+      });
+
+      quickChips.forEach((chip) => {
+        chip.addEventListener('click', () => sendTextTurn(chip.dataset.quickPrompt));
+      });
+
+      // --- CRM & Calendar Sync ---
+      async function fetchCrmAndCalendar() {
+        try {
+          const [slotsRes, leadsRes, apptsRes] = await Promise.all([
+            fetch('/api/slots'),
+            fetch('/api/leads'),
+            fetch('/api/appointments'),
+          ]);
+
+          if (slotsRes.ok) renderSlots(await slotsRes.json());
+          if (leadsRes.ok) renderLeads(await leadsRes.json());
+          if (apptsRes.ok) renderAppointments(await apptsRes.json());
+
+          const nowStr = new Date().toLocaleTimeString('en-IN', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+          });
+          lastSyncTime.textContent = `Synced ${nowStr}`;
+        } catch {
+          lastSyncTime.textContent = 'Sync failed';
+        }
+      }
+
+      function renderSlots(slots) {
+        const openCount = slots.filter((s) => !s.is_booked).length;
+        slotsCountBadge.textContent = `${openCount} open`;
+
+        if (!slots.length) {
+          slotsList.innerHTML = '<div class="col-span-full arch-card rounded-xl text-xs text-slate-400">No consultation slots configured.</div>';
+          return;
+        }
+
+        slotsList.innerHTML = slots.map((slot) => {
+          const formatted = formatSlotTime(slot.slot_datetime);
+          if (!slot.is_booked) {
+            return `
+              <div class="arch-card arch-card-hover rounded-xl flex items-center justify-between gap-2.5">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <span class="w-7 h-7 rounded-lg bg-elevated border border-borderline inline-flex items-center justify-center shrink-0">
+                    <svg class="w-3.5 h-3.5 text-mint-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <circle cx="12" cy="12" r="10"/>
+                      <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                  </span>
+                  <span class="font-mono text-xs text-emerald-50 tabular-nums truncate">${escapeHtml(formatted)}</span>
+                </div>
+                <span class="shrink-0 px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/15 text-mint-soft border border-emerald-400/30">
+                  Open
+                </span>
+              </div>
+            `;
+          }
+          return `
+            <div class="arch-card rounded-xl flex items-center justify-between gap-2.5 opacity-60">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="w-7 h-7 rounded-lg bg-canvas border border-borderline inline-flex items-center justify-center shrink-0">
+                  <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </span>
+                <span class="font-mono text-xs text-slate-400 line-through tabular-nums truncate">${escapeHtml(formatted)}</span>
+              </div>
+              <span class="shrink-0 px-2 py-0.5 rounded-full text-[11px] font-medium bg-canvas text-slate-400 border border-borderline">
+                Booked
+              </span>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function renderLeads(leads) {
+        leadsCountBadge.textContent = `${leads.length} total`;
+        navLeadsCount.textContent = String(leads.length);
+
+        if (!leads.length) {
+          leadsList.innerHTML = '<div class="col-span-full arch-card rounded-xl text-xs text-slate-400">No leads captured yet. Start a conversation with Forvi to qualify a prospect.</div>';
+          return;
+        }
+
+        leadsList.innerHTML = leads.map((lead) => {
+          const contact = [lead.email, lead.phone].filter(Boolean).join(' · ') || 'Pending';
+          const score = typeof lead.lead_score === 'number' ? lead.lead_score : 0;
+          const scoreBadge = score >= 75
+            ? 'bg-emerald-500/15 text-mint-soft border-emerald-400/35'
+            : (score >= 45
+              ? 'bg-amber-500/15 text-amber-200 border-amber-400/35'
+              : 'bg-canvas text-slate-300 border-borderline');
+
+          return `
+            <div class="arch-card arch-card-hover rounded-xl space-y-3">
+              <div class="flex items-start justify-between gap-2.5">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <span class="w-8 h-8 rounded-lg bg-elevated border border-borderline inline-flex items-center justify-center shrink-0">
+                    <svg class="w-4 h-4 text-mint-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                      <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                  </span>
+                  <div class="min-w-0">
+                    <div class="font-display text-sm font-semibold text-emerald-50 truncate">${escapeHtml(lead.name || 'Unnamed Prospect')}</div>
+                    ${lead.company ? `<div class="text-xs text-slate-400 truncate">${escapeHtml(lead.company)}</div>` : ''}
+                  </div>
+                </div>
+                <span class="shrink-0 font-mono text-xs px-2 py-0.5 rounded-md border tabular-nums ${scoreBadge}">
+                  ${score}/100
+                </span>
+              </div>
+              <div class="grid grid-cols-1 gap-1.5 text-xs pt-2 border-t border-headerline">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-slate-400">Contact</span>
+                  <span class="text-emerald-100 truncate">${escapeHtml(contact)}</span>
+                </div>
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-slate-400">Budget / Plan</span>
+                  <span class="font-mono text-mint-soft truncate">${escapeHtml(lead.budget || 'Not stated')}</span>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function renderAppointments(appointments) {
+        appointmentsCountBadge.textContent = `${appointments.length} scheduled`;
+        navApptsCount.textContent = String(appointments.length);
+
+        if (!appointments.length) {
+          appointmentsList.innerHTML = '<div class="col-span-full arch-card rounded-xl text-xs text-slate-400">No demos booked yet. Ask Forvi to schedule an open slot.</div>';
+          return;
+        }
+
+        appointmentsList.innerHTML = appointments.map((appt) => `
+          <div class="arch-card arch-card-hover rounded-xl space-y-2.5">
+            <div class="flex items-center justify-between gap-2.5">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="w-8 h-8 rounded-lg bg-elevated border border-borderline inline-flex items-center justify-center shrink-0">
+                  <svg class="w-4 h-4 text-mint-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect width="18" height="18" x="3" y="4" rx="2"/>
+                    <line x1="16" x2="16" y1="2" y2="6"/>
+                    <line x1="8" x2="8" y1="2" y2="6"/>
+                    <path d="m9 15 2 2 4-4"/>
+                  </svg>
+                </span>
+                <span class="font-display text-sm font-semibold text-emerald-50 truncate">${escapeHtml(appt.lead_name)}</span>
+              </div>
+              <span class="shrink-0 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/15 text-mint-soft border border-emerald-400/30 capitalize">
+                ${escapeHtml(appt.status || 'scheduled')}
+              </span>
+            </div>
+            <div class="font-mono text-xs text-mint-accent tabular-nums">
+              ${escapeHtml(formatSlotTime(appt.slot_datetime))}
+            </div>
+            ${appt.notes ? `<p class="text-xs text-slate-300 leading-relaxed">${escapeHtml(appt.notes)}</p>` : ''}
+          </div>
+        `).join('');
+      }
+
+      // --- Post-Call Intelligence Brief ---
+      function applySentimentBadge(sentiment) {
+        biSentimentBadge.className = 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border';
+        if (sentiment === 'Positive') {
+          biSentimentBadge.classList.add('bg-emerald-500/15', 'text-mint-soft', 'border-emerald-400/35');
+        } else if (sentiment === 'Negative') {
+          biSentimentBadge.classList.add('bg-rose-500/15', 'text-rose-200', 'border-rose-400/35');
+        } else {
+          biSentimentBadge.classList.add('bg-canvas', 'text-slate-200', 'border-borderline');
+        }
+        biSentimentBadge.textContent = sentiment || 'Neutral';
+      }
+
+      function applyLeadScoreBadge(leadScore) {
+        biLeadScoreBadge.className = 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border';
+        if (leadScore === 'Hot') {
+          biLeadScoreBadge.classList.add('bg-rose-500/15', 'text-rose-200', 'border-rose-400/35');
+        } else if (leadScore === 'Warm') {
+          biLeadScoreBadge.classList.add('bg-amber-500/15', 'text-amber-200', 'border-amber-400/35');
+        } else {
+          biLeadScoreBadge.classList.add('bg-elevated', 'text-mint-soft', 'border-borderline');
+        }
+        biLeadScoreBadge.textContent = leadScore || 'Warm';
+      }
+
+      function renderPostCallAnalytics(data) {
+        biEmptyState.classList.add('hidden');
+        biResultView.classList.remove('hidden');
+        navIntelReadyDot.classList.remove('hidden');
+
+        applySentimentBadge(data.sentiment);
+        applyLeadScoreBadge(data.lead_score);
+
+        biSummaryBullets.innerHTML = '';
+        const bullets = Array.isArray(data.summary_bullets) ? data.summary_bullets : [];
+        for (const bullet of bullets) {
+          const li = document.createElement('li');
+          li.textContent = bullet;
+          biSummaryBullets.appendChild(li);
+        }
+
+        biObjections.textContent = data.key_objections || 'None';
+        biNextAction.textContent = data.next_action || 'Follow up with product overview.';
+      }
+
+      endCallBtn.addEventListener('click', async () => {
+        if (isRecording) {
+          stopRecordingAndSend();
+        }
+        stopCurrentAudio();
+        clearNotice();
+
+        endCallBtn.disabled = true;
+        endCallBtnText.textContent = 'Analyzing...';
+        try {
+          const res = await fetch(`/api/call/end/${encodeURIComponent(sessionId)}`, {
+            method: 'POST',
+          });
+          const payload = await res.json();
+          if (!res.ok) {
+            showNotice(payload.detail || 'Failed to analyze call.');
+            return;
+          }
+          renderPostCallAnalytics(payload);
+          await fetchCrmAndCalendar();
+          setActiveView('intelligence');
+        } catch (err) {
+          showNotice(`Call analysis error: ${err.message || 'Network error'}`);
+        } finally {
+          endCallBtn.disabled = false;
+          endCallBtnText.textContent = 'End Call & Analyze';
+        }
+      });
+
+      // --- Session Reset ---
+      function startNewSession() {
+        if (isRecording) {
+          stopRecordingAndSend();
+        }
+        stopCurrentAudio();
+        clearNotice();
+        setProcessing(false);
+
+        sessionId = generateSessionId();
+        sessionBadge.textContent = sessionId;
+        hasStartedChat = false;
+        turnCount = 0;
+        turnSentAt = null;
+        latencyBadge.textContent = '-- ms';
+        turnCounterBadge.textContent = '0 turns';
+
+        transcriptContainer.innerHTML = '';
+        transcriptStreamWrap.classList.add('hidden');
+        transcriptStreamWrap.classList.remove('flex');
+        voiceHero.classList.remove('hidden');
+
+        biResultView.classList.add('hidden');
+        biEmptyState.classList.remove('hidden');
+        navIntelReadyDot.classList.add('hidden');
+
+        setActiveView('voice');
+        connectWebSocket();
+      }
+
+      newSessionBtn.addEventListener('click', startNewSession);
+      refreshCrmBtn.addEventListener('click', fetchCrmAndCalendar);
+
+      // --- Init ---
+      sessionBadge.textContent = sessionId;
+      setActiveView('voice');
+      connectWebSocket();
+      fetchCrmAndCalendar();
+      requestAnimationFrame(animateVisualizers);
+    })();
+  </script>
+</body>
+</html>
